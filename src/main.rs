@@ -1,6 +1,11 @@
+/// Interpreter for the Lox programming language from the
+/// "Crafting Interpreters" book
+mod lexer;
 use std::error::Error;
 use std::fmt::{Debug, Display};
 use std::io::BufRead;
+
+use lexer::Scanner;
 
 #[derive(Debug, Clone)]
 struct LoxError(String);
@@ -60,23 +65,6 @@ impl Lox {
 
     fn report(&self, line: usize, loc_str: &str, msg: &str) {
         println!("[line {}] Error{}: {}", line, loc_str, msg);
-    }
-}
-
-struct Scanner {
-    source: String,
-}
-
-impl Scanner {
-    fn new(source: String) -> Self {
-        Scanner { source }
-    }
-
-    fn scan(&self) -> Vec<String> {
-        self.source
-            .split_whitespace()
-            .map(|s| s.to_owned())
-            .collect()
     }
 }
 
