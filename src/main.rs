@@ -1,6 +1,8 @@
 /// Interpreter for the Lox programming language from the
 /// "Crafting Interpreters" book
 mod lexer;
+mod expr;
+    
 use std::error::Error;
 use std::fmt::{Debug, Display};
 use std::io::BufRead;
