@@ -1,0 +1,30 @@
+// Basic conditionals
+if true {
+    print "this should be printed"
+} else {
+    print "this should not be printed"
+}
+
+if false or true {
+    print "this should be printed"
+} else {
+    print "this should not be printed"
+}
+
+if 1 != 1 {
+    print "Bad comparison"
+} else {
+    print "Good comparison"
+}
+
+if 1 <= 1 {
+    print "Good comparison"
+} else {
+    print "Bad comparison"
+}
+
+if 1 > 2 {
+    print "Good comparison"
+} else {
+    print "Bad comparison"
+}
