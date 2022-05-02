@@ -21,7 +21,7 @@ impl Display for LoxError {
 impl Error for LoxError {}
 
 #[derive(Debug)]
-struct Lox {}
+pub struct Lox {}
 
 impl Lox {
     fn new() -> Self {
@@ -52,8 +52,9 @@ impl Lox {
     }
 
     fn run(&self, source: String) -> Result<(), LoxError> {
-        let scanner = Scanner::new(source);
-        for (i, token) in scanner.scan().iter().enumerate() {
+        let mut scanner = Scanner::new(source);
+        scanner.scan_tokens(self);
+        for (i, token) in scanner.tokens.iter().enumerate() {
             println!("Token {}: {}", i, token)
         }
         Ok(())
