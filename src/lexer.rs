@@ -100,6 +100,9 @@ impl Display for Token {
     }
 }
 
+// FIXME(alvaro): Make this Scanner work with a single-pass Iterator
+// over the tokens (with a peekable method) so that avoid unnecessary
+// loops over the source characters (see `peek` and `advance`)
 pub struct Scanner {
     source: String,
     pub tokens: Vec<Token>,
