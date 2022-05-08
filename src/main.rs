@@ -1,26 +1,40 @@
+mod expr;
 /// Interpreter for the Lox programming language from the
 /// "Crafting Interpreters" book
 mod lexer;
-mod expr;
-    
-use std::error::Error;
+
 use std::fmt::{Debug, Display};
 use std::io::BufRead;
 
 use lexer::Scanner;
 
-#[derive(Debug, Clone)]
-struct LoxError(String);
-
-// TODO(alvaro): Learn how to do this error handling properly
+// TODO(alvaro): Look into `thiserror` for hanlding this boilerplate
+#[derive(Debug)]
+enum LoxError {
+    IOError(std::io::Error),
+    Generic(String),
+}
 
 impl Display for LoxError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
+        match self {
+            LoxError::IOError(e) => write!(f, "IOError: {}", e),
+            LoxError::Generic(msg) => write!(f, "{}", msg),
+        }
     }
 }
 
-impl Error for LoxError {}
+impl From<std::io::Error> for LoxError {
+    fn from(e: std::io::Error) -> Self {
+        LoxError::IOError(e)
+    }
+}
+
+impl From<String> for LoxError {
+    fn from(e: String) -> Self {
+        LoxError::Generic(e)
+    }
+}
 
 #[derive(Debug)]
 pub struct Lox {}
@@ -30,9 +44,9 @@ impl Lox {
         Self {}
     }
 
-    fn run_file(&self, script_name: String) -> Result<(), String> {
+    fn run_file(&self, script_name: String) -> Result<(), LoxError> {
         println!("Running from script {}", script_name);
-        let contents = std::fs::read_to_string(script_name).map_err(|e| format!("{}", e))?;
+        let contents = std::fs::read_to_string(script_name)?;
         match self.run(contents) {
             Ok(_) => Ok(()),
             Err(err) => {
@@ -42,7 +56,7 @@ impl Lox {
         }
     }
 
-    fn run_prompt(&self) -> Result<(), String> {
+    fn run_prompt(&self) -> Result<(), LoxError> {
         println!("Running from prompt");
         let stdin = std::io::stdin();
         for line in stdin.lock().lines().flatten() {
@@ -71,7 +85,7 @@ impl Lox {
     }
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), LoxError> {
     let args = std::env::args();
 
     match args.len() {
@@ -83,7 +97,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let lox = Lox::new();
             lox.run_file(args.into_iter().nth(1).unwrap())?
         }
-        _ => return Err("usage: rinlox [script]".into()),
+        _ => return Err("usage: rinlox [script]".to_string().into()),
     }
 
     Ok(())
